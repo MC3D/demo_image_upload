@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import './App.css';
+import {fileUpload} from './../utilities/parse';
 
 class App extends Component {
   constructor() {
@@ -12,6 +13,7 @@ class App extends Component {
 
     this._handleName = this._handleName.bind(this);
     this._handleImage = this._handleImage.bind(this);
+    this._saveImage = this._saveImage.bind(this);
     this._saveProfile = this._saveProfile.bind(this);
   }
 
@@ -23,7 +25,7 @@ class App extends Component {
   _handleImage(e) {
     // The selected files' are returned by the element's HTMLInputElement.files property — this returns a FileList object, which contains a list of File objects
     let file = e.target.files[0];
-    // we'll use this value when we save the image (see _handleImageUpload)
+    // we'll use this value when we save the image (see _saveImage)
     this.setState({image: file});
 
     // The FileReader object lets web applications asynchronously read the contents of files (or raw data buffers) stored on the user's computer, using File or Blob objects to specify the file or data to read.
@@ -36,13 +38,27 @@ class App extends Component {
     reader.readAsDataURL(file);
   }
 
-  _saveProfile() {
+  _saveImage(e) {
+    e.preventDefault();
+    let image = this.state.image;
+    // method brought in from parse.js utitlity file
+    fileUpload(image, this._saveProfile);
+  }
 
+  _saveProfile(image) {
+    // image is an object with name and url properties
+    let profile = {
+      name: this.state.name,
+      picture: {
+        name: this.state.image.name,
+        url: image.url
+      }
+    }
   }
 
   render() {
     return (
-      <form className='col-md-5' onSubmit={this._saveProfile}>
+      <form className='col-md-5' onSubmit={this._saveImage}>
         <div className="form-group">
           <label htmlFor="name">Enter image name</label>
           <input type="text" className="form-control" id="name" placeholder="Enter name" value={this.state.name} onChange={this._handleName}/>
@@ -55,7 +71,7 @@ class App extends Component {
         </div>
         <div className="form-group">
           <span>Preview image</span>
-          <img src={this.state.previewImage}/>
+          <img src={this.state.previewImage} alt=''/>
         </div>
         <button type="submit" className="btn btn-primary">Submit</button>
       </form>
