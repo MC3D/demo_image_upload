@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import './App.css';
-import {fileUpload} from './../utilities/parse';
+import {fileUpload, saveProfile} from './../utilities/parse';
 
 class App extends Component {
   constructor() {
@@ -32,7 +32,7 @@ class App extends Component {
     let reader = new FileReader();
     // A handler for the loadend event. This event is triggered each time the reading operation is completed (either in success or failure).
     reader.onloadend = () => {
-       this.setState({previewImage: reader.result});
+      this.setState({previewImage: reader.result});
     }
     // Starts reading the contents of the specified Blob, once finished, the result attribute contains a data: URL representing the file's data.
     reader.readAsDataURL(file);
@@ -41,12 +41,13 @@ class App extends Component {
   _saveImage(e) {
     e.preventDefault();
     let image = this.state.image;
-    // method brought in from parse.js utitlity file
+    // method brought in from parse.js utility file
     fileUpload(image, this._saveProfile);
   }
 
   _saveProfile(image) {
     // image is an object with name and url properties
+    // console.log('image from parse', image);
     let profile = {
       name: this.state.name,
       picture: {
@@ -54,6 +55,11 @@ class App extends Component {
         url: image.url
       }
     }
+
+    saveProfile(profile)
+
+
+    // last step: save profile to parse
   }
 
   render() {
@@ -67,13 +73,13 @@ class App extends Component {
           <label htmlFor="image">Upload image</label>
           {/* the file input provides a button that opens up a file picker dialog that allows the user to choose a file */}
           {/* File inputs' value attribute contains a DOMString that represents the path to the selected file(s). */}
-          <input type="file" className="form-control" id="image" onChange={this._handleImage}/>
+          <input type = "file" className = "form-control" id = "image" onChange = {this._handleImage}/>
         </div>
-        <div className="form-group">
+        <div className = "form-group">
           <span>Preview image</span>
-          <img src={this.state.previewImage} alt=''/>
+          <img src={this.state.previewImage} alt = ''/>
         </div>
-        <button type="submit" className="btn btn-primary">Submit</button>
+        <button type = "submit" className = "btn btn-primary" >Submit</button>
       </form>
     );
   }

@@ -55,3 +55,24 @@ export const fileUpload = (file, callback) => {
       return;
     })
 }
+
+export const saveProfile = (profile) => {
+  fetch(`${PARSE_BASE_URL}/classes/Profile`, {
+    method: "POST",
+    body: JSON.stringify(profile),
+    headers: PARSE_HEADERS
+  })
+  .then((response)=>{
+    if(!response.ok) {
+      throw Error(response.statusText);
+    }
+    return response.json();
+  })
+  .then((result)=>{
+    console.log('profile added', result)
+    return;
+  })
+  .catch(err => {
+    console.log(err)
+  });
+}
